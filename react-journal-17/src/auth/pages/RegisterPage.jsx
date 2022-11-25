@@ -32,7 +32,7 @@ export const RegisterPage = () => {
 
  console.log(!displayNameIsValid)
   return (
-    <AuthLayout title="Crear cuenta">
+    <AuthLayout title="TESTING GIT">
       <h1>form { formIsValid ? 'Valido' : 'Incorrecto' }</h1>
       <form onSubmit={onSubmit}>
           <Grid container>
