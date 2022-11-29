@@ -1,35 +1,38 @@
 import { Link as RouterLink } from 'react-router-dom';
-import { Button, Grid, Link, TextField, Typography } from '@mui/material';
+import { Alert, Button, Grid, Link, TextField, Typography } from '@mui/material';
 import { Google } from '@mui/icons-material';
 
 import { useMemo } from 'react';
 import { AuthLayout } from '../layout/AuthLayout';
 import { useForm } from '../../hooks/useForm';
 import { useDispatch, useSelector } from 'react-redux';
-import { checkingAuthentication, startGoogleAuthentication } from '../../store/auth/thunks';
+import { checkingAuthentication, startGoogleAuthentication, startLoginWithEmailPassword } from '../../store/auth/thunks';
 
 
 
 export const LoginPage = () => {
 
 
-  const { status } = useSelector( state => state.auth);
-  console.log( status );
+  const { status, errorMessage } = useSelector( state => state.auth);
 
+  const isLoginAuthenticated = useMemo(() => errorMessage === null , [ status ])
+
+  console.log( status )
   const isAuthenticating =  useMemo(() => status === 'checking', [status]) ;
-  console.log(isAuthenticating)
   const dispatch = useDispatch();
 
    const { email, password, onInputChange } = useForm({
-      email: 'nachogalvez@hotmail.com',
-      password: 123456,
+      email: '',
+      password: '',
    })
 
    const onSubmit = (event) => {
     event. preventDefault();
 
     dispatch(checkingAuthentication());
-    console.log({email, password});
+
+    dispatch(startLoginWithEmailPassword({ email, password }))
+    //console.log({email, password});
    }
 
    const onGoogleSignIn = () => {
@@ -67,6 +70,11 @@ export const LoginPage = () => {
             </Grid>
             
             <Grid container spacing={ 2 } sx={{ mb: 2, mt: 1 }}>
+              <Grid item xs={ 12 } display= { !errorMessage ? 'none' : '' }>
+                <Alert severity='error' >
+                  { errorMessage }
+                </Alert>
+              </Grid>
               <Grid item xs={ 12 } sm={ 6 }>
                 <Button
                   disabled={ isAuthenticating }

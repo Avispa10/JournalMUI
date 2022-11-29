@@ -1,10 +1,11 @@
 import { AuthLayout } from '../layout/AuthLayout';
 import { useForm } from '../../hooks/useForm';
 import { Link as RouterLink } from 'react-router-dom';
-import { Button, Grid, Link, TextField, Typography } from '@mui/material';
+import { Alert, Button, Grid, Link, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { startCreatingUser } from '../../store/auth/thunks';
+import { useMemo } from 'react';
 
 
 
@@ -30,6 +31,10 @@ export const RegisterPage = () => {
 
 
   const [formSubmitted, setformSubmitted] = useState(false);
+
+  const stateAuth = useSelector( state => state.auth);
+
+ const isCheckingAuth = useMemo( () => stateAuth.status === 'checking')
 
 
  const onSubmit = (event) => {
@@ -99,8 +104,14 @@ export const RegisterPage = () => {
             </Grid>
             
             <Grid container spacing={ 2 } sx={{ mb: 2, mt: 1 }}>
+
+
+              <Grid item xs={ 12 } display= { !stateAuth.errorMessage ? 'none' : '' }>
+                <Alert severity="error">{stateAuth.errorMessage}</Alert>
+              </Grid>
               <Grid item xs={ 12 }>
-                <Button 
+                <Button
+                  disabled={ isCheckingAuth }
                   type = 'submit'
                   variant='contained' fullWidth>
                   Crear cuenta
